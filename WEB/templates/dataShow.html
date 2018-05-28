@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<head>
+<meta content="telephone=no" name="format-detection" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;" />
+<title>向秦计算机软件(上海）有限公司</title>
+<style>
+*{margin:0px;padding:0px;}
+
+    /* Basic Grey */
+    .basic-grey {
+    margin-left:auto;
+    margin-right:auto;
+        margin-top:50px;
+    max-width: 500px;
+    background: #F7F7F7;
+    padding: 25px 0px 25px 0px;
+    font: 12px Georgia, "Times New Roman", Times, serif;
+    color: #888;
+    text-shadow: 1px 1px 1px #FFF;
+    border:1px solid #E4E4E4;
+    }
+    .basic-grey h1 {
+    font-size: 25px;
+    padding: 0px 0px 10px 40px;
+    display: block;
+    border-bottom:1px solid #E4E4E4;
+    margin: -10px 0px 30px 0px;;
+    color: #888;
+    }
+    .basic-grey h1>span {
+    display: block;
+    font-size: 11px;
+    }
+    .basic-grey label {
+    display: block;
+    margin: 0px;
+    }
+    .basic-grey label>span {
+    float: left;
+    width: 20%;
+    text-align: right;
+    padding-right: 10px;
+    margin-top: 10px;
+    color: #888;
+    }
+    .basic-grey input[type="text"], .basic-grey input[type="email"], .basic-grey textarea, .basic-grey select {
+    border: 1px solid #DADADA;
+    color: #888;
+    height: 30px;
+    margin-bottom: 16px;
+    margin-right: 6px;
+    margin-top: 2px;
+    outline: 0 none;
+    padding: 3px 3px 3px 5px;
+    width: 70%;
+    font-size: 12px;
+    line-height:15px;
+    box-shadow: inset 0px 1px 4px #ECECEC;
+    -moz-box-shadow: inset 0px 1px 4px #ECECEC;
+    -webkit-box-shadow: inset 0px 1px 4px #ECECEC;
+    }
+    .basic-grey textarea{
+    padding: 5px 3px 3px 5px;
+    }
+     .basic-grey .button {
+    background: #E27575;
+    border: none;
+    padding: 10px 25px 10px 25px;
+    color: #FFF;
+    box-shadow: 1px 1px 5px #B6B6B6;
+    border-radius: 3px;
+    text-shadow: 1px 1px 1px #9E3F3F;
+    cursor: pointer;
+    }
+    .basic-grey .button:hover {
+    background: #CF7A7A
+    }
+a{text-decoration: none;}
+</style>
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="basic-grey" >
+    <form action="" method="post" class="STYLE-NAME">
+    <h1 style="position: relative;">向秦计算机软件(上海）<span style="position:absolute;top:5px;right:10px;color:red;">请求次数:<i id="time">0</i></span></h1>
+    <label>
+    <span>温度:</span>
+    <input id="temp" type="text" name="temp" disabled="disabled" />
+    </label>
+
+    <label>
+    <span>湿度:</span>
+    <input id="humi" type="text"  disabled="disabled" name="humi"/>
+    </label>
+     <label>
+    <span>亮度</span>
+    <input id="pts" type="text"  disabled="disabled" name="pts" />
+    </label>
+    <label>
+    <span>大气压</span>
+    <input id="pree" type="text"  disabled="disabled"name="pree" />
+    </label>
+     <label>
+    <span>PM2.5</span>
+    <input id="PM2" type="text"  disabled="disabled"name="PM2" />
+    </label>
+     <label>
+    <span>PM10</span>
+    <input id="PM10" type="text"  disabled="disabled"name="PM10" />
+    </label>
+        <label>
+    <span>数据ID</span>
+    <input id="dataId" type="text"  name="dataId" />
+    </label>
+      <label>
+    <span>内容</span>
+    <input id="content" type="text"  name="content" />
+    </label>
+     <label>
+    <span>&nbsp;</span>
+    <input type="button" class="button" value="翻转LED" id="toggle"/>
+         <input type="button" class="button" value="发送" id="send" style="margin-left:50px;"/>
+    </label>
+
+
+    </form>
+
+</div>
+<script>
+    var time=0;
+    ledUrl="https://www.jxembdsf.cn/?SendDataToClient&SrcClientID=100014&DestClientID=100018&SendData=ToogleLed&end";
+    eventUrl="https://www.jxembdsf.cn/?SendDataToClient&SrcClientID=100014&DestClientID=";
+        function dataRes()
+                {
+                                 $.ajax({
+        cache:false,
+        type:"GET",
+        url:"{% url 'iotSystem:ajax_dataShow' %}",
+        async:true,
+        success:function(data){
+                time=time+1;
+                $("#time").text(time)
+                                console.log(data);
+                //      alert(data);
+           $("input[name='temp']").val(data.temperature);
+        $("input[name='pts']").val(data.light_intensity);
+        $("input[name='pree']").val(data.atmospheric_pressure);
+         $("input[name='PM2']").val(data.pm2);
+        $("input[name='humi']").val(data.humidity);
+        $("input[name='PM10']").val(data.pm10);
+            }
+
+        });
+
+                      }
+        function sendToServer(url)
+        {
+             $.ajax({
+                  async:true,
+                   url:url,
+                   type:"GET",
+                //   dataType:"jsonp",
+					success:function(data){
+						alert(data);
+					},
+                     error:function(error){
+                                            alert("发送成功！");
+                                            console.log("OK");
+
+                                             }
+               });
+
+        }
+    $(function()
+    {
+
+           window.onerror=function(){return true;}
+                dataRes();
+                setInterval(dataRes,5000);//5s
+                $("#toggle").click(function()
+                {
+                    sendToServer(ledUrl);
+                });
+                $("#send").click(function(){
+                    var reg=/^[0-9]*$/;
+              //     alert(eventUrl+$("#dataId").val());
+                    if($("#dataId").val()==""|| $("#content").val()=="")
+                    {
+                        alert("数据不能为空！");
+                        return;
+                    }else if(!reg.test($("#dataId").val()))
+                    {
+                        alert("只能输入数字！！");
+                        return;
+                    }
+             //       alert(eventUrl+$("#dataId").val()+"&SendData="+$("#content").val()+"&end");
+                   sendToServer(eventUrl+$("#dataId").val()+"&SendData="+$("#content").val()+"&end");
+                });
+    });
+</script>
+</body>
+</html>
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>历史数据</title>
+     <script src="/statics/js/loading.js"></script>
+	<link rel="shortcut icon" href="favicon.ico"> <link href="/statics/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <!-- 引入 echarts.js -->
+	 <script src="/statics/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/statics/js/plugins/echarts/echarts.js"></script>
+</head>
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+	
+	
+	<div class="container">
+		<ul class="list-group">
+			<li class="list-group-item">欢迎进入物联网实时监控系统</li>
+		</ul>
+		<div class="row" >
+
+			<div class="col-md-12" style="border-left:red 2px solid;">
+				<table class="table table-striped">
+					  <caption>气体历史情况</caption>
+					  <thead>
+						<tr>
+                            <th>温度</th>
+                            <th>湿度</th>
+						<!--  <th>光照</th> !-->
+                            <th>PM2.5</th>
+                            <th>经度</th>
+                            <th>纬度</th>
+						  <th>时间</th>
+						</tr>
+					  </thead>
+					  <tbody>
+                      {% for  dataone in data.object_list %}
+{#                          <tr class="{% if dataone.flag %}danger{% endif %}">#}
+                          <tr>
+                        <td>{{ dataone.temp }}</td>
+						  <td>{{ dataone.humi }}</td>
+						  <td>{{ dataone.pm }}</td>
+                          <td>{{ dataone.jingdu }}</td>
+                              <td>{{ dataone.weidu }}</td>
+                          <td>{{ dataone.time }}</td>
+                          </tr>
+{#						</tr>#}
+                      {% endfor %}
+					  </tbody>
+					</table>
+
+			</div>
+
+</div>
+{# The following renders the pagination html #}
+<div id="pagination" style="margin-top:-40px;">
+    {{ data.render }}
+</div>
+
+
+		
+	
+	</div>
+    <script type="text/javascript">
+
+		
+		
+ </script>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</body>
+</html>

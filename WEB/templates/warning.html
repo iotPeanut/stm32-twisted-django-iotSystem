@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+     <script src="/statics/js/loading.js"></script>
+	<link rel="shortcut icon" href="favicon.ico"> <link href="/statics/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <!-- 引入 echarts.js -->
+	 <script src="/statics/js/jquery.min.js?v=2.1.4"></script>
+</head>
+<body>
+
+	
+	
+	<div class="container">
+		<ul class="list-group">
+			<li class="list-group-item">欢迎进入物联网实时监控系统</li>
+		</ul>
+		<div class="row" >
+
+			<div class="col-md-12" style="border-left:red 2px solid;">
+				<table class="table table-striped">
+					  <caption>ch4报警历史</caption>
+					  <thead>
+						<tr>
+                            <th>报警值</th>
+                            <th>报警内容</th>
+                            <th>报警时间</th>
+                            <th>报警级别</th>
+                            <th>报警状态</th>
+						</tr>
+					  </thead>
+					  <tbody>
+                      {% for  dataone in data.object_list %}
+{#                          <tr class="{% if dataone.flag %}danger{% endif %}">#}
+                          <tr  {% ifequal dataone.warning.level 'primary' %}class="warning" {% else %}class="danger" {% endifequal %}>
+                           <td>{{ dataone.currentvalue }}</td>
+                          <td>{{ dataone.warning.messageContent }}</td>
+                          <td>{{ dataone.time }}</td>
+                              <td>{{dataone.warning.level  }}</td>
+                          <td>已发邮件</td>
+                          </tr>
+{#						</tr>#}
+                      {% endfor %}
+					  </tbody>
+					</table>
+
+			</div>
+
+</div>
+{# The following renders the pagination html #}
+<div id="pagination" style="margin-top:-40px;">
+    {{ data.render }}
+</div>
+
+
+		
+	
+	</div>
+    <script type="text/javascript">
+
+		
+		
+ </script>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</body>
+</html>

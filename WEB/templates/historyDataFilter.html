@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>历史数据曲线</title>
+	<link rel="shortcut icon" href="favicon.ico"> <link href="/statics/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico"> <link href="/statics/css/bootstrapSwitch.css?v=3.3.6" rel="stylesheet">
+    <!-- 引入 echarts.js -->
+	 <script src="/statics/js/jquery.min.js?v=2.1.4"></script>
+    <script src="https://cdn.bootcss.com/echarts/4.1.0.rc2/echarts-en.min.js"></script>
+    <script src="/statics/js/bootstrapSwitch.js"></script>
+    <link href="/statics/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="/statics/css/animate.css" rel="stylesheet">
+    <link href="/statics/css/style.css?v=4.1.0" rel="stylesheet">
+    <script src="/statics/js/loading.js"></script>
+</head>
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+	<div class="container">
+        <div class="col-sm-12" style="margin-top:20px;">
+                <form class="form-inline pull-left" role="form" method="post" action="{% url 'iotSystem:historyDataFilter' %}">
+                     {% csrf_token %}
+                    <div class="form-group">
+                        <select name="time"class="form-control">
+                            <option value="0">三十分钟</option>
+                            <option value="1">一个小时</option>
+                            <option value="2">六个小时</option>
+                            <option value="3">十二小时</option>
+                            </select>
+                        </div>
+                    <div class="form-group">
+                        <input id="start" name="start" class="form-control layer-date" placeholder="开始日期">&nbsp;&nbsp;<lable style="font-weight:bold;">到</lable>&nbsp;&nbsp;
+                        <input id="end" name="end" class="form-control layer-date" placeholder="结束日期">
+                        </div>
+                    <button type="submit" class="btn btn-info">检索</button>
+                    </form>
+        </div>
+                <div class="row" style="margin-top:100px;">
+                    <div class="col-md-12" id="main" style="height:400px;">
+                    </div>
+                 </div>
+
+	    </div>
+    </div>
+    <!-- layerDate plugin javascript -->
+    <script src="/statics/js/plugins/layer/laydate/laydate.js"></script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+	$(function() {
+
+        var myChart = echarts.init(document.getElementById('main'));
+        //日期范围限制
+        var start = {
+            elem: '#start',
+            format: 'YYYY/MM/DD hh:mm:ss',
+           // min: laydate.now(), //设定最小日期为当前日期
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: false,
+            choose: function (datas) {
+                end.min = datas; //开始日选好后，重置结束日的最小日期
+                end.start = datas ;//将结束日的初始值设定为开始日
+            }
+        };
+        var end = {
+            elem: '#end',
+            format: 'YYYY/MM/DD hh:mm:ss',
+          //  min: laydate.now(),
+            max: '2099-06-16 23:59:59',
+            istime: true,
+            istoday: false,
+            choose: function (datas) {
+               start.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+        laydate(start);
+        laydate(end);
+
+
+
+        //曲线
+                    var humiData = [],tempData=[],pmData=[];
+            var data={{ data_list|safe }};
+            for(var i=0;i<data.length;i++)
+            {
+                humiData.push({
+                    name:data[i].time,
+                    value:[data[i].time,data[i].humi]
+                });
+                  tempData.push({
+                    name:data[i].time,
+                    value:[data[i].time,data[i].temp]
+                });
+                  pmData.push({
+                    name:data[i].time,
+                    value:[data[i].time,data[i].pm]
+                });
+            }
+option = {
+    title: {
+        text: '历史数据曲线分析'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['温度','湿度','PM2.5']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+       type:'time'
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name:'温度',
+            type:'line',
+
+            data:tempData
+        },
+        {
+            name:'湿度',
+            type:'line',
+
+            data:humiData
+        },
+        {
+            name:'PM2.5',
+            type:'line',
+
+            data:pmData
+        }
+    ]
+};
+        myChart.setOption(option);
+    });
+
+ </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

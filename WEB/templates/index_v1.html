@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>实时数据</title>
+     <script src="/statics/js/loading.js"></script>
+	<link rel="shortcut icon" href="favicon.ico"> <link href="/statics/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico"> <link href="/statics/css/bootstrapSwitch.css?v=3.3.6" rel="stylesheet">
+    <!-- 引入 echarts.js -->
+	 <script src="/statics/js/jquery.min.js?v=2.1.4"></script>
+    <script src="https://cdn.bootcss.com/echarts/4.1.0.rc2/echarts-en.min.js"></script>
+    <script src="/statics/js/bootstrapSwitch.js"></script>
+
+</head>
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+	<div class="container">
+		<ul class="list-group">
+			<li class="list-group-item">欢迎进入物联网实时监控系统</li>
+		</ul>
+		<div class="row" >
+			<div class="col-md-6" id="main" style="height:400px;">
+			</div>
+			<div class="col-md-6" style="border-left:red 2px solid;height:400px;">
+				<ul class="list-group">
+					<li class="list-group-item">气体实时数据</li>
+				</ul>
+				
+				<form role="form">
+				  <div class="form-group">
+					<label for="name">温度</label>
+					<input type="text" class="form-control"name="temp" disabled="disabled">
+					<label for="name">湿度</label>
+					<!--<input type="text" class="form-control" name="humi" disabled="disabled">
+                      <label for="name">光照</label>
+                      !-->
+					<input type="text" class="form-control" name="humi" disabled="disabled">
+                      <label for="name">PM2.5粉尘</label>
+					<input type="text" class="form-control" name="pm" disabled="disabled">
+				  </div>
+				 </form>
+
+                <!--  实时控制家用电气!-->
+{#？#}
+{#                            <div class="switch" id="myswitch2">#}
+{#                                 <input type="checkbox"  />#}
+{#                            </div>#}
+                    </div>
+			</div>
+		</div>
+		
+	
+	</div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+	$(function()
+	{
+		
+			var myChart = echarts.init(document.getElementById('main'));
+            var humiData = [],tempData=[],pmData=[];
+            var data={{ data_list|safe }};
+            for(var i=0;i<data.length;i++)
+            {
+                humiData.push({
+                    name:data[i].time,
+                    value:[data[i].time,data[i].humi]
+                });
+                  tempData.push({
+                    name:data[i].time,
+                    value:[data[i].time,data[i].temp]
+                });
+                  pmData.push({
+                    name:data[i].time,
+                    value:[data[i].time,data[i].pm]
+                });
+            }
+option = {
+    title: {
+        text: '实时数据'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['温度','湿度','pm']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+       type:'time'
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name:'温度',
+            type:'line',
+
+            data:tempData
+        },
+        {
+            name:'湿度',
+            type:'line',
+
+            data:humiData
+        },
+        {
+            name:'pm',
+            type:'line',
+
+            data:pmData
+        }
+    ]
+};
+//第一次初始化用
+myChart.setOption(option);
+var timeFlag="";
+                //ajax
+        setInterval(function () {
+                        //ajax请求数据
+                    $.ajax({
+                            cache:false,
+                            type:"POST",
+                            url:"{% url 'iotSystem:ajax_data' %}",
+                            async:true,
+                            beforeSend:function(xhr, settings){
+                                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                                },
+                            success:function(data){
+                                if(timeFlag==data.time) return;
+                                timeFlag=data.time;
+                                $("input[name='temp']").val(data.temp);
+                                $("input[name='humi']").val(data.humi+"%");
+                                $("input[name='pm']").val(data.pm);
+                                     humiData.shift();
+                                    humiData.push({
+                                    name:data.time,
+                                    value:[data.time,data.humi]
+                                });
+                                    tempData.shift();
+                                    tempData.push({
+                                    name:data.time,
+                                    value:[data.time,data.temp]
+                                });
+                                pmData.shift();
+                                    pmData.push({
+                                    name:data.time,
+                                    value:[data.time,data.pm]
+                                });
+                                             myChart.setOption({
+                                                        series: [
+                                                                    {
+                                                                        name:'温度',
+                                                                        type:'line',
+
+                                                                        data:tempData
+                                                                    },
+                                                                    {
+                                                                        name:'湿度',
+                                                                        type:'line',
+
+                                                                        data:humiData
+                                                                    },
+                                                                    {
+                                                                        name:'pm',
+                                                                        type:'line',
+
+                                                                        data:pmData
+                                                                    }
+                                                                ]
+                                                });
+
+                            }
+                        });
+
+}, 2000);
+        //first request
+                    $.ajax({
+                            cache:false,
+                            type:"POST",
+                            url:"{% url 'iotSystem:ajax_data' %}",
+                            async:true,
+                            beforeSend:function(xhr, settings){
+                                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                                },
+                            success:function(data){
+                                if(timeFlag==data.time) return;
+                                timeFlag=data.time;
+                                $("input[name='temp']").val(data.temp);
+                                $("input[name='humi']").val(data.humi+"%");
+                                $("input[name='pm']").val(data.pm);
+                                     humiData.unshift();
+                                    humiData.push({
+                                    name:data.time,
+                                    value:[data.time,data.humi]
+                                });
+                                    tempData.unshift();
+                                    tempData.push({
+                                    name:data.time,
+                                    value:[data.time,data.temp]
+                                });
+                                pmData.unshift();
+                                    pmData.push({
+                                    name:data.time,
+                                    value:[data.time,data.pm]
+                                });
+                                             myChart.setOption({
+                                                        series: [
+                                                                    {
+                                                                        name:'温度',
+                                                                        type:'line',
+
+                                                                        data:tempData
+                                                                    },
+                                                                    {
+                                                                        name:'湿度',
+                                                                        type:'line',
+
+                                                                        data:humiData
+                                                                    },
+                                                                    {
+                                                                        name:'pm',
+                                                                        type:'line',
+
+                                                                        data:pmData
+                                                                    }
+                                                                ]
+                                                });
+
+                            }
+                        });
+    });
+
+ </script>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</body>
+</html>
