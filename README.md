@@ -20,3 +20,10 @@
 * 数据超标邮件报警
 * 通过网页实时控制硬件
 ## 效果截图
+实时曲线<br/>
+![实时曲线](https://github.com/iotPeanut/stm32-twisted-django-iotSystem/blob/master/%E6%95%88%E6%9E%9C%E6%88%AA%E5%9B%BE/%E5%AE%9E%E6%97%B6%E6%9B%B2%E7%BA%BF.png)
+历史曲线
+![历史曲线](https://github.com/iotPeanut/stm32-twisted-django-iotSystem/blob/master/%E6%95%88%E6%9E%9C%E6%88%AA%E5%9B%BE/%E5%8E%86%E5%8F%B2%E6%9B%B2%E7%BA%BF.png)
+报警信息
+![报警信息](https://github.com/iotPeanut/stm32-twisted-django-iotSystem/blob/master/%E6%95%88%E6%9E%9C%E6%88%AA%E5%9B%BE/%E6%8A%A5%E8%AD%A6%E4%BF%A1%E6%81%AF.png)
+![控制硬件](https://github.com/iotPeanut/stm32-twisted-django-iotSystem/blob/master/%E6%95%88%E6%9E%9C%E6%88%AA%E5%9B%BE/%E6%8E%A7%E5%88%B6%E8%AE%BE%E5%A4%87.png)
